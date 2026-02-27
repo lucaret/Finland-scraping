@@ -23,6 +23,8 @@ jobs:
           # If you have a requirements.txt, uncomment the next line:
           # pip install -r requirements.txt
           # Or install them directly, e.g.: pip install supabase requests beautifulsoup4
+          |
+          pip install feedparser supabase
 
       - name: Run the scraper
         env:
