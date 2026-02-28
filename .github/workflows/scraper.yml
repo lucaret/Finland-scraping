@@ -2,7 +2,7 @@ name: Run Finland Scraper
 
 on:
   schedule:
-    - cron: '0 0 * * *' # Runs daily at midnight UTC
+    - cron: '0 * * * *' # Runs at minute 0 of every hour
   workflow_dispatch: # This creates the manual "Run workflow" button
 
 jobs:
