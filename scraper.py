@@ -58,7 +58,6 @@ for source_name, feed_url in RSS_SOURCES.items():
         if activity_type:
             articles_found += 1
             source_counts[source_name] += 1
-            company = title.split(' ')[0] 
             try:
                 dt = datetime(*entry.published_parsed[:6]).isoformat()
             except:
@@ -67,7 +66,6 @@ for source_name, feed_url in RSS_SOURCES.items():
             try:
                 supabase.table("finnish_ma_activities").insert({
                     "date": dt,
-                    "company_name": company,
                     "title": title,
                     "url": link,
                     "activity_type": activity_type,
@@ -75,7 +73,6 @@ for source_name, feed_url in RSS_SOURCES.items():
                 }).execute()
                 print(f"✅ Added from {source_name}: '{title}'")
             except Exception as e:
-                # FIXED: Now it prints actual database errors!
                 if "duplicate key value" not in str(e).lower():
                     print(f"❌ Supabase Error: {e}")
 
@@ -105,11 +102,9 @@ try:
         if activity_type:
             articles_found += 1
             source_counts[source_name] += 1
-            company = title.split(' ')[0]
             try:
                 supabase.table("finnish_ma_activities").insert({
                     "date": datetime.now().isoformat(),
-                    "company_name": company,
                     "title": title,
                     "url": link,
                     "activity_type": activity_type,
@@ -148,11 +143,9 @@ try:
         if activity_type:
             articles_found += 1
             source_counts[source_name] += 1
-            company = title.split(' ')[0]
             try:
                 supabase.table("finnish_ma_activities").insert({
                     "date": datetime.now().isoformat(),
-                    "company_name": company,
                     "title": title,
                     "url": link,
                     "activity_type": activity_type,
