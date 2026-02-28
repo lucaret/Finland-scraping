@@ -10,10 +10,9 @@ url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
 
-# 1. Dictionary mapping the Source Name to its Google News RSS feed
+# 1. Google News RSS Feeds (Removed Cision from here to scrape it directly below!)
 RSS_SOURCES = {
     "Alma Media (Kauppalehti/Talouselämä)": "https://news.google.com/rss/search?q=site:kauppalehti.fi+OR+site:talouselama.fi+OR+site:arvopaperi.fi&hl=fi&gl=FI&ceid=FI:fi",
-    "Cision Finland": "https://news.google.com/rss/search?q=site:news.cision.com/fi&hl=fi&gl=FI&ceid=FI:fi",
     "STT Info": "https://news.google.com/rss/search?q=site:sttinfo.fi&hl=fi&gl=FI&ceid=FI:fi",
     "GlobeNewswire": "https://news.google.com/rss/search?q=site:globenewswire.com+Finland&hl=en-US&gl=US&ceid=US:en",
     "Inderes": "https://news.google.com/rss/search?q=site:inderes.fi&hl=fi&gl=FI&ceid=FI:fi",
@@ -21,14 +20,19 @@ RSS_SOURCES = {
     "Nordic Tech (ArcticStartup/Sifted)": "https://news.google.com/rss/search?q=site:arcticstartup.com+OR+site:sifted.eu+Finland&hl=en-US&gl=US&ceid=US:en"
 }
 
-# 2. Your Custom MFN Filtered Web Page
+# 2. Custom HTML Web Pages
 MFN_URL = "https://www.mfn.se/all/s/nordic?filter=(and(or(a.market_segment_ids%40%3E%5B17%5D)(a.market_segment_ids%40%3E%5B18%5D)(a.market_segment_ids%40%3E%5B19%5D)(a.market_segment_ids%40%3E%5B6%5D)))&limit=20000"
+CISION_URL = "https://news.cision.com/fi/"
 
+# Keywords
 ACQUISITION_KEYWORDS = ['ostaa', 'yrityskauppa', 'hankkii', 'merger', 'acquisition', 'yhdistyminen', 'förvärv', 'förvärvar']
 EXPANSION_KEYWORDS = ['laajentuu', 'tytäryhtiö', 'perustaa', 'expansion', 'subsidiary', 'etablerar']
+EXCLUSION_KEYWORDS = ['own shares', 'omien osakkeiden', 'omia osakkeita', 'egna aktier']
 
 def categorize_activity(title):
     title_lower = title.lower()
+    if any(word in title_lower for word in EXCLUSION_KEYWORDS):
+        return None
     if any(word in title_lower for word in ACQUISITION_KEYWORDS):
         return "Acquisition"
     if any(word in title_lower for word in EXPANSION_KEYWORDS):
@@ -37,6 +41,7 @@ def categorize_activity(title):
 
 print("Starting Ultimate Nordic M&A scraper...")
 articles_found = 0
+headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 
 # --- PART 1: SCRAPE RSS FEEDS ---
 for source_name, feed_url in RSS_SOURCES.items():
@@ -63,20 +68,18 @@ for source_name, feed_url in RSS_SOURCES.items():
                     "title": title,
                     "url": link,
                     "activity_type": activity_type,
-                    "source": source_name  # <-- HERE IS THE NEW SOURCE TRACKER!
+                    "source": source_name
                 }).execute()
                 print(f"✅ Added from {source_name}: '{title}'")
             except Exception as e:
                 if "duplicate key value" not in str(e).lower():
                     pass
 
-# --- PART 2: SCRAPE CUSTOM MFN HTML PAGE ---
+# --- PART 2: SCRAPE MFN NORDIC HTML ---
 print(f"Checking MFN Nordic...")
 try:
-    headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
     response = requests.get(MFN_URL, headers=headers)
     soup = BeautifulSoup(response.text, 'html.parser')
-    
     links = soup.find_all('a', href=True)
     mfn_articles = []
     
@@ -88,9 +91,7 @@ try:
                 link_url = "https://www.mfn.se" + link_url
             mfn_articles.append({"title": title, "link": link_url})
             
-    unique_mfn_articles = {v['link']:v for v in mfn_articles}.values()
-    
-    for article in unique_mfn_articles:
+    for article in {v['link']:v for v in mfn_articles}.values():
         title = article['title']
         link = article['link']
         activity_type = categorize_activity(title)
@@ -98,16 +99,14 @@ try:
         if activity_type:
             articles_found += 1
             company = title.split(' ')[0]
-            dt = datetime.now().isoformat()
-            
             try:
                 supabase.table("finnish_ma_activities").insert({
-                    "date": dt,
+                    "date": datetime.now().isoformat(),
                     "company_name": company,
                     "title": title,
                     "url": link,
                     "activity_type": activity_type,
-                    "source": "MFN Nordic" # <-- HARDCODED SOURCE FOR MFN
+                    "source": "MFN Nordic"
                 }).execute()
                 print(f"✅ Added from MFN Nordic: '{title}'")
             except Exception as e:
@@ -116,4 +115,34 @@ try:
 except Exception as e:
     print(f"❌ Error scraping MFN: {e}")
 
-print(f"Scraping complete. Found {articles_found} M&A articles in total.")
+# --- PART 3: SCRAPE CISION FINLAND HTML ---
+print(f"Checking Cision Finland...")
+try:
+    response = requests.get(CISION_URL, headers=headers)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    links = soup.find_all('a', href=True)
+    cision_articles = []
+    
+    for a in links:
+        link_url = a['href']
+        title = a.get_text(strip=True)
+        # Cision press releases almost always have '/r/' in the URL path
+        if title and len(title) > 15 and "/r/" in link_url:
+            if not link_url.startswith('http'):
+                link_url = "https://news.cision.com" + link_url
+            cision_articles.append({"title": title, "link": link_url})
+            
+    for article in {v['link']:v for v in cision_articles}.values():
+        title = article['title']
+        link = article['link']
+        activity_type = categorize_activity(title)
+        
+        if activity_type:
+            articles_found += 1
+            company = title.split(' ')[0]
+            try:
+                supabase.table("finnish_ma_activities").insert({
+                    "date": datetime.now().isoformat(),
+                    "company_name": company,
+                    "title": title,
+                    "
