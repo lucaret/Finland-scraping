@@ -41,7 +41,7 @@ def categorize_activity(title):
 
 print("Starting Ultimate Nordic M&A scraper...")
 articles_found = 0
-source_counts = {} # NEW: This tracks the count for each source
+source_counts = {} 
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 
 # --- PART 1: SCRAPE RSS FEEDS ---
@@ -75,8 +75,9 @@ for source_name, feed_url in RSS_SOURCES.items():
                 }).execute()
                 print(f"✅ Added from {source_name}: '{title}'")
             except Exception as e:
+                # FIXED: Now it prints actual database errors!
                 if "duplicate key value" not in str(e).lower():
-                    pass
+                    print(f"❌ Supabase Error: {e}")
 
 # --- PART 2: SCRAPE MFN NORDIC HTML ---
 print(f"Checking MFN Nordic...")
@@ -117,7 +118,7 @@ try:
                 print(f"✅ Added from {source_name}: '{title}'")
             except Exception as e:
                 if "duplicate key value" not in str(e).lower():
-                    pass
+                    print(f"❌ Supabase Error: {e}")
 except Exception as e:
     print(f"❌ Error scraping MFN: {e}")
 
@@ -160,11 +161,10 @@ try:
                 print(f"✅ Added from {source_name}: '{title}'")
             except Exception as e:
                 if "duplicate key value" not in str(e).lower():
-                    pass
+                    print(f"❌ Supabase Error: {e}")
 except Exception as e:
     print(f"❌ Error scraping Cision: {e}")
 
-# NEW: Print a clean summary scoreboard at the very end!
 print("\n--- SCRAPE SUMMARY ---")
 for source, count in source_counts.items():
     print(f"{source}: {count} M&A articles found")
