@@ -10,7 +10,7 @@ url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
 
-# 1. Google News RSS Feeds (Removed Cision from here to scrape it directly below!)
+# 1. Google News RSS Feeds
 RSS_SOURCES = {
     "Alma Media (Kauppalehti/Talouselämä)": "https://news.google.com/rss/search?q=site:kauppalehti.fi+OR+site:talouselama.fi+OR+site:arvopaperi.fi&hl=fi&gl=FI&ceid=FI:fi",
     "STT Info": "https://news.google.com/rss/search?q=site:sttinfo.fi&hl=fi&gl=FI&ceid=FI:fi",
@@ -145,4 +145,16 @@ try:
                     "date": datetime.now().isoformat(),
                     "company_name": company,
                     "title": title,
-                    "
+                    "url": link,
+                    "activity_type": activity_type,
+                    "source": "Cision Finland"
+                }).execute()
+                print(f"✅ Added from Cision Finland: '{title}'")
+            except Exception as e:
+                if "duplicate key value" not in str(e).lower():
+                    pass
+except Exception as e:
+    print(f"❌ Error scraping Cision: {e}")
+
+# THIS IS THE FIXED LINE: Note the closing quotation mark at the very end!
+print(f"Scraping complete. Found {articles_found} M&A articles in total.")
