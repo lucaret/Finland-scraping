@@ -11,7 +11,7 @@ key: str = os.environ.get("SUPABASE_KEY")
 supabase: Client = create_client(url, key)
 
 # --- MASTER CONFIGURATION: SOURCES BY COUNTRY ---
-NORDIC_DATA = {
+EUROPE_DATA = {
     "Finland": {
         "mfn_url": "https://www.mfn.se/all/s/nordic?filter=(and(or(a.market_segment_ids%40%3E%5B17%5D)(a.market_segment_ids%40%3E%5B18%5D)(a.market_segment_ids%40%3E%5B19%5D)(a.market_segment_ids%40%3E%5B6%5D)))&limit=20000",
         "cision_url": "https://news.cision.com/fi/",
@@ -47,16 +47,39 @@ NORDIC_DATA = {
             "GlobeNewswire Norway": "https://news.google.com/rss/search?q=site:globenewswire.com+Norway&hl=en-US&gl=US&ceid=US:en",
             "NTB (Norwegian PR)": "https://news.google.com/rss/search?q=site:ntb.no&hl=no&gl=NO&ceid=NO:no"
         }
+    },
+    "Netherlands": {
+        "rss_feeds": {
+            "Het Financieele Dagblad / BNR": "https://news.google.com/rss/search?q=site:fd.nl+OR+site:bnr.nl+OR+site:iex.nl+OR+site:mtsprout.nl&hl=nl&gl=NL&ceid=NL:nl",
+            "GlobeNewswire Netherlands": "https://news.google.com/rss/search?q=site:globenewswire.com+Netherlands&hl=en-US&gl=US&ceid=US:en",
+            "ANP (Dutch PR)": "https://news.google.com/rss/search?q=site:anp.nl&hl=nl&gl=NL&ceid=NL:nl"
+        }
+    },
+    "Belgium": {
+        "rss_feeds": {
+            "De Tijd / Trends (NL)": "https://news.google.com/rss/search?q=site:tijd.be+OR+site:trends.knack.be&hl=nl&gl=BE&ceid=BE:nl",
+            "L'Echo / Le Vif (FR)": "https://news.google.com/rss/search?q=site:lecho.be+OR+site:trends.levif.be&hl=fr&gl=BE&ceid=BE:fr",
+            "GlobeNewswire Belgium": "https://news.google.com/rss/search?q=site:globenewswire.com+Belgium&hl=en-US&gl=US&ceid=US:en"
+        }
+    },
+    "France": {
+        "rss_feeds": {
+            "Les Echos / La Tribune": "https://news.google.com/rss/search?q=site:lesechos.fr+OR+site:latribune.fr+OR+site:lefigaro.fr/economie&hl=fr&gl=FR&ceid=FR:fr",
+            "GlobeNewswire France": "https://news.google.com/rss/search?q=site:globenewswire.com+France&hl=en-US&gl=US&ceid=US:en",
+            "L'Usine Nouvelle / French Tech": "https://news.google.com/rss/search?q=site:usinenouvelle.com+OR+site:frenchweb.fr&hl=fr&gl=FR&ceid=FR:fr"
+        }
     }
 }
 
-# --- PAN-NORDIC KEYWORDS ---
-# Added Danish (DA), Norwegian (NO), and Swedish (SV) terminology
+# --- PAN-EUROPEAN KEYWORDS ---
+# Added Dutch (NL) and French (FR) terminology
 ACQUISITION_KEYWORDS = [
     'ostaa', 'yrityskauppa', 'hankkii', 'yhdistyminen', # FI
     'förvärv', 'förvärvar', 'köper', 'samgåendes',      # SV
     'opkøb', 'køber', 'fusion',                         # DA
     'oppkjøp', 'kjøper', 'fusjon',                      # NO
+    'overname', 'neemt over', 'koopt', 'acquisitie',    # NL
+    'rachat', 'acquiert', 'acquisition', 'rachète',     # FR
     'merger', 'acquisition'                             # EN
 ]
 EXPANSION_KEYWORDS = [
@@ -64,13 +87,17 @@ EXPANSION_KEYWORDS = [
     'etablerar', 'dotterbolag',                         # SV
     'ekspansion', 'etablerer', 'datterselskab',         # DA
     'ekspansjon', 'datterselskap',                      # NO
-    'expansion', 'subsidiary'                           # EN
+    'uitbreiding', 'opent', 'dochteronderneming',       # NL
+    'expansion', 'filiale', "s'étend", 'ouverture',     # FR
+    'subsidiary'                                        # EN
 ]
 EXCLUSION_KEYWORDS = [
     'own shares', 'omien osakkeiden', 'omia osakkeita', # EN/FI
     'egna aktier', 'återköp',                           # SV
     'egne aktier', 'tilbagekøb',                        # DA
-    'egne aksjer', 'tilbakekjøp'                        # NO
+    'egne aksjer', 'tilbakekjøp',                       # NO
+    'eigen aandelen', 'inkoop eigen aandelen',          # NL
+    'actions propres', "rachat d'actions"               # FR
 ]
 
 def categorize_activity(title):
@@ -83,13 +110,13 @@ def categorize_activity(title):
         return "Expansion"
     return None
 
-print("Starting Pan-Nordic M&A scraper...")
+print("Starting Pan-European M&A scraper...")
 articles_found = 0
 source_counts = {} 
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 
 # --- LOOP THROUGH EACH COUNTRY ---
-for country, config in NORDIC_DATA.items():
+for country, config in EUROPE_DATA.items():
     print(f"\n=======================")
     print(f"🌍 SEARCHING: {country}")
     print(f"=======================")
@@ -115,7 +142,6 @@ for country, config in NORDIC_DATA.items():
                     dt = datetime.now().isoformat()
                     
                 try:
-                    # Note: We still push to finnish_ma_activities table! 
                     supabase.table("finnish_ma_activities").insert({
                         "country": country,
                         "date": dt,
@@ -220,8 +246,8 @@ for country, config in NORDIC_DATA.items():
             print(f"❌ Error scraping Cision {country}: {e}")
 
 # --- FINAL SCORECARD ---
-print("\n--- PAN-NORDIC SCRAPE SUMMARY ---")
+print("\n--- PAN-EUROPEAN SCRAPE SUMMARY ---")
 for source, count in source_counts.items():
-    if count > 0: # Only print sources that found something to keep logs clean
+    if count > 0:
         print(f"{source}: {count} M&A articles found")
-print(f"\nTotal: {articles_found} M&A articles found across all Nordic countries.")
+print(f"\nTotal: {articles_found} M&A articles found across all countries.")
