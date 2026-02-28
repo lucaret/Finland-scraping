@@ -41,11 +41,13 @@ def categorize_activity(title):
 
 print("Starting Ultimate Nordic M&A scraper...")
 articles_found = 0
+source_counts = {} # NEW: This tracks the count for each source
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 
 # --- PART 1: SCRAPE RSS FEEDS ---
 for source_name, feed_url in RSS_SOURCES.items():
     print(f"Checking {source_name}...")
+    source_counts[source_name] = 0
     feed = feedparser.parse(feed_url)
     
     for entry in feed.entries:
@@ -55,6 +57,7 @@ for source_name, feed_url in RSS_SOURCES.items():
         
         if activity_type:
             articles_found += 1
+            source_counts[source_name] += 1
             company = title.split(' ')[0] 
             try:
                 dt = datetime(*entry.published_parsed[:6]).isoformat()
@@ -77,6 +80,8 @@ for source_name, feed_url in RSS_SOURCES.items():
 
 # --- PART 2: SCRAPE MFN NORDIC HTML ---
 print(f"Checking MFN Nordic...")
+source_name = "MFN Nordic"
+source_counts[source_name] = 0
 try:
     response = requests.get(MFN_URL, headers=headers)
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -98,6 +103,7 @@ try:
         
         if activity_type:
             articles_found += 1
+            source_counts[source_name] += 1
             company = title.split(' ')[0]
             try:
                 supabase.table("finnish_ma_activities").insert({
@@ -106,9 +112,9 @@ try:
                     "title": title,
                     "url": link,
                     "activity_type": activity_type,
-                    "source": "MFN Nordic"
+                    "source": source_name
                 }).execute()
-                print(f"✅ Added from MFN Nordic: '{title}'")
+                print(f"✅ Added from {source_name}: '{title}'")
             except Exception as e:
                 if "duplicate key value" not in str(e).lower():
                     pass
@@ -117,6 +123,8 @@ except Exception as e:
 
 # --- PART 3: SCRAPE CISION FINLAND HTML ---
 print(f"Checking Cision Finland...")
+source_name = "Cision Finland"
+source_counts[source_name] = 0
 try:
     response = requests.get(CISION_URL, headers=headers)
     soup = BeautifulSoup(response.text, 'html.parser')
@@ -126,7 +134,6 @@ try:
     for a in links:
         link_url = a['href']
         title = a.get_text(strip=True)
-        # Cision press releases almost always have '/r/' in the URL path
         if title and len(title) > 15 and "/r/" in link_url:
             if not link_url.startswith('http'):
                 link_url = "https://news.cision.com" + link_url
@@ -139,6 +146,7 @@ try:
         
         if activity_type:
             articles_found += 1
+            source_counts[source_name] += 1
             company = title.split(' ')[0]
             try:
                 supabase.table("finnish_ma_activities").insert({
@@ -147,14 +155,17 @@ try:
                     "title": title,
                     "url": link,
                     "activity_type": activity_type,
-                    "source": "Cision Finland"
+                    "source": source_name
                 }).execute()
-                print(f"✅ Added from Cision Finland: '{title}'")
+                print(f"✅ Added from {source_name}: '{title}'")
             except Exception as e:
                 if "duplicate key value" not in str(e).lower():
                     pass
 except Exception as e:
     print(f"❌ Error scraping Cision: {e}")
 
-# THIS IS THE FIXED LINE: Note the closing quotation mark at the very end!
-print(f"Scraping complete. Found {articles_found} M&A articles in total.")
+# NEW: Print a clean summary scoreboard at the very end!
+print("\n--- SCRAPE SUMMARY ---")
+for source, count in source_counts.items():
+    print(f"{source}: {count} M&A articles found")
+print(f"Total: {articles_found} M&A articles found across all sources.")
