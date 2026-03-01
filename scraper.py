@@ -18,7 +18,11 @@ EUROPE_DATA = {
         "rss_feeds": {
             "Alma Media (Kauppalehti/Talouselämä)": "https://news.google.com/rss/search?q=site:kauppalehti.fi+OR+site:talouselama.fi+OR+site:arvopaperi.fi&hl=fi&gl=FI&ceid=FI:fi",
             "STT Info": "https://news.google.com/rss/search?q=site:sttinfo.fi&hl=fi&gl=FI&ceid=FI:fi",
-            "GlobeNewswire Finland": "https://news.google.com/rss/search?q=site:globenewswire.com+Finland&hl=en-US&gl=US&ceid=US:en",
+            "GlobeNewswire Finland": "https://news.google.com/rss/search?q=site:globenewswire.com+Finland&hl=fi-FI&gl=FI&ceid=FI:fi",
+            "Google News ostaa": "https://news.google.com/rss/search?q=ostaa&hl=fi-FI&gl=FI&ceid=FI:fi",
+            "Google News Yrityskauppa": "https://news.google.com/rss/search?q=Yrityskauppa&hl=fi-FI&gl=FI&ceid=FI:fi",
+            "Google News Yritysosto": "https://news.google.com/rss/search?q=Yritysosto&hl=fi-FI&gl=FI&ceid=FI:fi",
+            "Google News Haltuunotto": "https://news.google.com/rss/search?q=Haltuunotto&hl=fi-FI&gl=FI&ceid=FI:fi",
             "Inderes": "https://news.google.com/rss/search?q=site:inderes.fi&hl=fi&gl=FI&ceid=FI:fi",
             "Business Finland": "https://news.google.com/rss/search?q=site:businessfinland.fi&hl=fi&gl=FI&ceid=FI:fi",
             "Nordic Tech (ArcticStartup/Sifted)": "https://news.google.com/rss/search?q=site:arcticstartup.com+OR+site:sifted.eu+Finland&hl=en-US&gl=US&ceid=US:en"
@@ -74,7 +78,7 @@ EUROPE_DATA = {
 # --- PAN-EUROPEAN KEYWORDS ---
 # Added Dutch (NL) and French (FR) terminology
 ACQUISITION_KEYWORDS = [
-    'ostaa', 'yrityskauppa', 'hankkii', 'yhdistyminen', # FI
+    'ostaa', 'yrityskauppa', 'hankkii', 'yhdistyminen', 'Haltuunotto', 'Yritysosto' # FI
     'förvärv', 'förvärvar', 'köper', 'samgåendes',      # SV
     'opkøb', 'køber', 'fusion',                         # DA
     'oppkjøp', 'kjøper', 'fusjon',                      # NO
