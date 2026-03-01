@@ -23,6 +23,10 @@ EUROPE_DATA = {
             "Google News Yrityskauppa": "https://news.google.com/rss/search?q=Yrityskauppa&hl=fi-FI&gl=FI&ceid=FI:fi",
             "Google News Yritysosto": "https://news.google.com/rss/search?q=Yritysosto&hl=fi-FI&gl=FI&ceid=FI:fi",
             "Google News Haltuunotto": "https://news.google.com/rss/search?q=Haltuunotto&hl=fi-FI&gl=FI&ceid=FI:fi",
+            "Google News Kansainvälistyminen": "https://news.google.com/rss/search?q=Kansainvälistyminen&hl=fi-FI&gl=FI&ceid=FI:fi",
+            "Google News Kasvu": "https://news.google.com/rss/search?q=Kasvu&hl=fi-FI&gl=FI&ceid=FI:fi",
+            "Google News Laajentuminen ulkomaille": "https://news.google.com/rss/search?q=Laajentuminen+ulkomaille&hl=fi-FI&gl=FI&ceid=FI:fi",
+            "Google News laajenee ulkomaille": "https://news.google.com/rss/search?q=laajenee+ulkomaille&hl=fi-FI&gl=FI&ceid=FI:fi",
             "Inderes": "https://news.google.com/rss/search?q=site:inderes.fi&hl=fi&gl=FI&ceid=FI:fi",
             "Business Finland": "https://news.google.com/rss/search?q=site:businessfinland.fi&hl=fi&gl=FI&ceid=FI:fi",
             "Nordic Tech (ArcticStartup/Sifted)": "https://news.google.com/rss/search?q=site:arcticstartup.com+OR+site:sifted.eu+Finland&hl=en-US&gl=US&ceid=US:en"
@@ -87,7 +91,7 @@ ACQUISITION_KEYWORDS = [
     'merger', 'acquisition'                             # EN
 ]
 EXPANSION_KEYWORDS = [
-    'laajentuu', 'tytäryhtiö', 'perustaa',              # FI
+    'laajentuu', 'tytäryhtiö', 'perustaa', 'Kansainvälistyminen', 'Kasvu', 'Laajentuminen',  'ulkomaille', 'laajenee'      # FI
     'etablerar', 'dotterbolag',                         # SV
     'ekspansion', 'etablerer', 'datterselskab',         # DA
     'ekspansjon', 'datterselskap',                      # NO
