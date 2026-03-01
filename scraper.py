@@ -25,6 +25,12 @@ EUROPE_DATA = {
             "Google News Haltuunotto": "https://news.google.com/rss/search?q=Haltuunotto&hl=fi-FI&gl=FI&ceid=FI:fi",
             "Google News Kansainvälistyminen": "https://news.google.com/rss/search?q=Kansainvälistyminen&hl=fi-FI&gl=FI&ceid=FI:fi",
             "Google News Kasvu": "https://news.google.com/rss/search?q=Kasvu&hl=fi-FI&gl=FI&ceid=FI:fi",
+
+            "Google News kerännyt": "https://news.google.com/rss/search?q=kerännyt&hl=fi-FI&gl=FI&ceid=FI:fi",
+            "Google News rahoituskierros": "https://news.google.com/rss/search?q=rahoituskierros&hl=fi-FI&gl=FI&ceid=FI:fi",
+            "Google News sijoituskierros": "https://news.google.com/rss/search?q=sijoituskierros&hl=fi-FI&gl=FI&ceid=FI:fi",
+            "Google News kerännyt rahoitusta": "https://news.google.com/rss/search?q=kerännyt+rahoitusta&hl=fi-FI&gl=FI&ceid=FI:fi",
+
             "Google News Laajentuminen ulkomaille": "https://news.google.com/rss/search?q=Laajentuminen+ulkomaille&hl=fi-FI&gl=FI&ceid=FI:fi",
             "Google News laajenee ulkomaille": "https://news.google.com/rss/search?q=laajenee+ulkomaille&hl=fi-FI&gl=FI&ceid=FI:fi",
             "Inderes": "https://news.google.com/rss/search?q=site:inderes.fi&hl=fi&gl=FI&ceid=FI:fi",
@@ -90,6 +96,11 @@ ACQUISITION_KEYWORDS = [
     'rachat', 'acquiert', 'acquisition', 'rachète',     # FR
     'merger', 'acquisition'                             # EN
 ]
+CAPITALRAISE_KEYWORDS = [
+    'kerännyt', 'rahoituskierros', 'sijoituskierros', 'kerännyt', 'rahoitusta'     # FI
+
+]
+
 EXPANSION_KEYWORDS = [
     'laajentuu', 'tytäryhtiö', 'perustaa', 'Kansainvälistyminen', 'Kasvu', 'Laajentuminen',  'ulkomaille', 'laajenee'      # FI
     'etablerar', 'dotterbolag',                         # SV
@@ -108,12 +119,15 @@ EXCLUSION_KEYWORDS = [
     'actions propres', "rachat d'actions"               # FR
 ]
 
+
 def categorize_activity(title):
     title_lower = title.lower()
     if any(word in title_lower for word in EXCLUSION_KEYWORDS):
         return None
     if any(word in title_lower for word in ACQUISITION_KEYWORDS):
         return "Acquisition"
+    if any(word in title_lower for word in CAPITALRAISE_KEYWORDS):
+        return "Capital raise"    
     if any(word in title_lower for word in EXPANSION_KEYWORDS):
         return "Expansion"
     return None
