@@ -43,6 +43,17 @@ EUROPE_DATA = {
         "rss_feeds": {
             "Dagens Industri / Breakit": "https://news.google.com/rss/search?q=site:di.se+OR+site:breakit.se+OR+site:realtid.se&hl=sv&gl=SE&ceid=SE:sv",
             "GlobeNewswire Sweden": "https://news.google.com/rss/search?q=site:globenewswire.com+Sweden&hl=en-US&gl=US&ceid=US:en",
+            "Google News förvärv": "https://news.google.com/rss/search?q=förvärv&hl=se-SE&gl=SE&ceid=SE:se",
+            "Google News Uppköp": "https://news.google.com/rss/search?q=Uppköp&hl=se-SE&gl=SE&ceid=SE:se",
+            "Google News Dotterbolag": "https://news.google.com/rss/search?q=Dotterbolagv&hl=se-SE&gl=SE&ceid=SE:se",
+            "Google News Konsolidering": "https://news.google.com/rss/search?q=Konsolidering&hl=se-SE&gl=SE&ceid=SE:se",
+            "Google News Utlandsexpansion": "https://news.google.com/rss/search?q=Utlandsexpansion&hl=se-SE&gl=SE&ceid=SE:se",
+            "Google News kapitaltillskott": "https://news.google.com/rss/search?q=kapitaltillskott&hl=se-SE&gl=SE&ceid=SE:se",
+            "Google News expanderar": "https://news.google.com/rss/search?q=expanderar&hl=se-SE&gl=SE&ceid=SE:se",
+            "Google News etablerar": "https://news.google.com/rss/search?q=etablerar&hl=se-SE&gl=SE&ceid=SE:se",
+            "Google News tillväxt": "https://news.google.com/rss/search?q=tillväxt&hl=se-SE&gl=SE&ceid=SE:se",
+
+
             "Cision Sweden": "https://news.google.com/rss/search?q=site:news.cision.com/se&hl=sv&gl=SE&ceid=SE:sv"
         }
     },
@@ -88,8 +99,8 @@ EUROPE_DATA = {
 # --- PAN-EUROPEAN KEYWORDS ---
 # Added Dutch (NL) and French (FR) terminology
 ACQUISITION_KEYWORDS = [
-    'ostaa', 'yrityskauppa', 'hankkii', 'yhdistyminen', 'Haltuunotto', 'Yritysosto' # FI
-    'förvärv', 'förvärvar', 'köper', 'samgåendes',      # SV
+    'ostaa', 'yrityskauppa', 'hankkii', 'yhdistyminen', 'Haltuunotto', 'Yritysosto', # FI
+    'förvärv', 'förvärvar', 'köper', 'samgåendes','samgående', 'övertagande', 'företagsförvärv', 'uppköp',     # SV
     'opkøb', 'køber', 'fusion',                         # DA
     'oppkjøp', 'kjøper', 'fusjon',                      # NO
     'overname', 'neemt over', 'koopt', 'acquisitie',    # NL
@@ -97,13 +108,14 @@ ACQUISITION_KEYWORDS = [
     'merger', 'acquisition'                             # EN
 ]
 CAPITALRAISE_KEYWORDS = [
-    'kerännyt', 'rahoituskierros', 'sijoituskierros', 'kerännyt', 'rahoitusta'     # FI
+    'kerännyt', 'rahoituskierros', 'sijoituskierros', 'kerännyt', 'rahoitusta',     # FI
+    'tagit in', 'finansieringsrunda', 'investeringsrunda', 'rest kapital', 'nyemission', 'kapitaltillskott', 'kapitalrunda' # SV
 
 ]
 
 EXPANSION_KEYWORDS = [
-    'laajentuu', 'tytäryhtiö', 'perustaa', 'Kansainvälistyminen', 'Kasvu', 'Laajentuminen',  'ulkomaille', 'laajenee'      # FI
-    'etablerar', 'dotterbolag',                         # SV
+    'laajentuu', 'tytäryhtiö', 'perustaa', 'Kansainvälistyminen', 'Kasvu', 'Laajentuminen',  'ulkomaille', 'laajenee',      # FI
+    'etablerar', 'dotterbolag', 'expanderar',  'etablerar', 'internationalisering', 'tillväxt', 'expansion', 'utomlands', 'etablering', 'utlandssatsning',                        # SV
     'ekspansion', 'etablerer', 'datterselskab',         # DA
     'ekspansjon', 'datterselskap',                      # NO
     'uitbreiding', 'opent', 'dochteronderneming',       # NL
