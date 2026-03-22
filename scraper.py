@@ -25,12 +25,10 @@ EUROPE_DATA = {
             "Google News Haltuunotto": "https://news.google.com/rss/search?q=Haltuunotto&hl=fi-FI&gl=FI&ceid=FI:fi",
             "Google News Kansainvälistyminen": "https://news.google.com/rss/search?q=Kansainvälistyminen&hl=fi-FI&gl=FI&ceid=FI:fi",
             "Google News Kasvu": "https://news.google.com/rss/search?q=Kasvu&hl=fi-FI&gl=FI&ceid=FI:fi",
-
             "Google News kerännyt": "https://news.google.com/rss/search?q=kerännyt&hl=fi-FI&gl=FI&ceid=FI:fi",
             "Google News rahoituskierros": "https://news.google.com/rss/search?q=rahoituskierros&hl=fi-FI&gl=FI&ceid=FI:fi",
             "Google News sijoituskierros": "https://news.google.com/rss/search?q=sijoituskierros&hl=fi-FI&gl=FI&ceid=FI:fi",
             "Google News kerännyt rahoitusta": "https://news.google.com/rss/search?q=kerännyt+rahoitusta&hl=fi-FI&gl=FI&ceid=FI:fi",
-
             "Google News Laajentuminen ulkomaille": "https://news.google.com/rss/search?q=Laajentuminen+ulkomaille&hl=fi-FI&gl=FI&ceid=FI:fi",
             "Google News laajenee ulkomaille": "https://news.google.com/rss/search?q=laajenee+ulkomaille&hl=fi-FI&gl=FI&ceid=FI:fi",
             "Inderes": "https://news.google.com/rss/search?q=site:inderes.fi&hl=fi&gl=FI&ceid=FI:fi",
@@ -51,9 +49,8 @@ EUROPE_DATA = {
             "Google News kapitaltillskott": "https://news.google.com/rss/search?q=kapitaltillskott&hl=se-SE&gl=SE&ceid=SE:se",
             "Google News expanderar": "https://news.google.com/rss/search?q=expanderar&hl=se-SE&gl=SE&ceid=SE:se",
             "Google News etablerar": "https://news.google.com/rss/search?q=etablerar&hl=se-SE&gl=SE&ceid=SE:se",
-            "Google News tillväxt": "https://news.google.com/rss/search?q=tillväxt&hl=se-SE&gl=SE&ceid=SE:se",
-
-
+            # FIXED URL BELOW: Added -site:vietnam.vn directly to Google Search
+            "Google News tillväxt": "https://news.google.com/rss/search?q=tillväxt+-site:vietnam.vn&hl=se-SE&gl=SE&ceid=SE:se",
             "Cision Sweden": "https://news.google.com/rss/search?q=site:news.cision.com/se&hl=sv&gl=SE&ceid=SE:sv"
         }
     },
@@ -97,7 +94,6 @@ EUROPE_DATA = {
 }
 
 # --- PAN-EUROPEAN KEYWORDS ---
-# Added Dutch (NL) and French (FR) terminology
 ACQUISITION_KEYWORDS = [
     'ostaa', 'yrityskauppa', 'hankkii', 'yhdistyminen', 'Haltuunotto', 'Yritysosto', # FI
     'förvärv', 'förvärvar', 'köper', 'samgåendes','samgående', 'övertagande', 'företagsförvärv', 'uppköp',     # SV
@@ -110,7 +106,6 @@ ACQUISITION_KEYWORDS = [
 CAPITALRAISE_KEYWORDS = [
     'kerännyt', 'rahoituskierros', 'sijoituskierros', 'kerännyt', 'rahoitusta',     # FI
     'tagit in', 'finansieringsrunda', 'investeringsrunda', 'rest kapital', 'nyemission', 'kapitaltillskott', 'kapitalrunda' # SV
-
 ]
 
 EXPANSION_KEYWORDS = [
@@ -124,11 +119,11 @@ EXPANSION_KEYWORDS = [
 ]
 EXCLUSION_KEYWORDS = [
     'own shares', 'omien osakkeiden', 'omia osakkeita', # EN/FI
-    'egna aktier', 'återköp',                           # SV
+    'egna aktier', 'återköp',                            # SV
     'egne aktier', 'tilbagekøb',                        # DA
     'egne aksjer', 'tilbakekjøp',                       # NO
     'eigen aandelen', 'inkoop eigen aandelen',          # NL
-    'actions propres', "rachat d'actions"               # FR
+    'actions propres', "rachat d'actions"                # FR
 ]
 
 
@@ -163,6 +158,14 @@ for country, config in EUROPE_DATA.items():
         feed = feedparser.parse(feed_url)
         
         for entry in feed.entries:
+            # --- ADDED FILTER HERE ---
+            # Extract the actual news source name from the entry
+            actual_source = entry.source.get('title', '') if hasattr(entry, 'source') else ""
+            
+            if actual_source.lower() == "vietnam.vn":
+                continue # Immediately skip this article and move to the next one
+            # -------------------------
+
             title = entry.title
             link = entry.link
             activity_type = categorize_activity(title)
